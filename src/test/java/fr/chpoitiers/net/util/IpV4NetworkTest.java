@@ -73,11 +73,21 @@ public class IpV4NetworkTest {
         assertEquals(NM_1, ip.getNetmask());
         log.debug("IP renvoyée : " + ip.getAddress() + " / " + ip.getNetmask());
 
+        // This case : return an address with default /32 netmask
+        ip = new IpV4Network(IP_1);
+        log.debug("IP renvoyée : " + ip.getAddress() + " / " + ip.getNetmask());
+        assertEquals(IP_1, ip.getAddress());
+        assertEquals(32, ip.getNetmaskAsInt());
+        
+        
         try {
-            ip = new IpV4Network(IP_1);
+            ip = new IpV4Network(IP_1 + "/2/3");
             fail("Should have failed with non CIDR address : " + IP_1);
         } catch (NumberFormatException e) {
         }
+        
+        
+        
     }
 
     @Test

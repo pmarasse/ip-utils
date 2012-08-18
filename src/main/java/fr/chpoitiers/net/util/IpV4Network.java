@@ -57,11 +57,15 @@ public class IpV4Network implements IpNetwork {
     public IpV4Network(final String cidrIp) {
 
         String[] elts = cidrIp.split("\\/");
-        if (elts.length != 2) {
+        if (elts.length > 2) {
             throw new NumberFormatException("Invalid CIDR Address : " + cidrIp);
         }
-        this.rawIp = ipAddressStringToInt(elts[0]);
-        this.setCidrMask(Integer.parseInt(elts[1]));
+        if (elts.length == 2) {
+            setCidrMask(Integer.parseInt(elts[1]));
+        } else {
+            cidrMask = 32;
+        }
+        rawIp = ipAddressStringToInt(elts[0]);
     }
 
     /**
@@ -176,6 +180,12 @@ public class IpV4Network implements IpNetwork {
             throw new IllegalAccessError("CIDR mask must be between 0 and 32");
         }
         cidrMask = mask;
+    }
+    
+    @Override
+    public int getNetmaskAsInt() {
+        
+        return cidrMask;
     }
 
     public int getRawIp() {

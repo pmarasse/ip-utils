@@ -30,10 +30,14 @@ public class IpV6Network implements IpNetwork {
     public IpV6Network(final String cidrAddress) {
 
         String[] elts = cidrAddress.split("\\/");
-        if (elts.length != 2) {
+        if (elts.length > 2) {
             throw new IllegalArgumentException("Invalid CIDR Address : " + cidrAddress);
         }
-        setCidrMask(Integer.parseInt(elts[1]));
+        if (elts.length == 2) {
+            setCidrMask(Integer.parseInt(elts[1]));
+        } else {
+            cidrMask = 128;
+        }
         ip = parseAddress(elts[0]);
     }
 
@@ -42,7 +46,7 @@ public class IpV6Network implements IpNetwork {
      * 
      * @param address
      *            Litteral address
-     * @return
+     * @return DualLong object with numeric representation of the address
      */
     private DualLong parseAddress(final String address) {
 
@@ -143,7 +147,7 @@ public class IpV6Network implements IpNetwork {
      * Convert CIDR mask to dual long
      * 
      * @param cidrMask
-     * @return
+     * @return DualLong object representation of netmask
      */
     private DualLong cidrMaskToDualLong(int cidrMask) {
 
@@ -164,7 +168,7 @@ public class IpV6Network implements IpNetwork {
 
         if (container instanceof IpV6Network) {
 
-            DualLong containerMask = cidrMaskToDualLong(((IpV6Network) container).getCidrMask());
+            DualLong containerMask = cidrMaskToDualLong(((IpV6Network) container).getNetmaskAsInt());
             long myPrefix = ip.prefix & containerMask.prefix;
             long mySuffix = ip.suffix & containerMask.suffix;
 
@@ -210,7 +214,8 @@ public class IpV6Network implements IpNetwork {
         this.cidrMask = mask;
     }
 
-    public int getCidrMask() {
+    @Override
+    public int getNetmaskAsInt() {
 
         return cidrMask;
     }

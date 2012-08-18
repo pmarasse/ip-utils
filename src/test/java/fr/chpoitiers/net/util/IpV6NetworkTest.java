@@ -43,23 +43,23 @@ public class IpV6NetworkTest {
         IpV6Network ip = new IpV6Network(LOCALHOST, LOCALHOST_MASK);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
         assertEquals(LOCALHOST, ip.getAddress());
-        assertEquals(LOCALHOST_MASK, ip.getCidrMask());
+        assertEquals(LOCALHOST_MASK, ip.getNetmaskAsInt());
         assertEquals(FULL_FF, ip.getNetmask());
 
         ip = new IpV6Network(LOCAL_LINK, LOCAL_LINK_MASK);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
         assertEquals(LOCAL_LINK, ip.getAddress());
-        assertEquals(LOCAL_LINK_MASK, ip.getCidrMask());
+        assertEquals(LOCAL_LINK_MASK, ip.getNetmaskAsInt());
 
         ip = new IpV6Network(TEST, TEST_MASK);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
         assertEquals(TEST, ip.getAddress());
-        assertEquals(TEST_MASK, ip.getCidrMask());
+        assertEquals(TEST_MASK, ip.getNetmaskAsInt());
 
         ip = new IpV6Network(LOCAL_TEST_CIDR);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
         assertEquals(LOCAL_TEST, ip.getAddress());
-        assertEquals(LOCAL_TEST_MASK, ip.getCidrMask());
+        assertEquals(LOCAL_TEST_MASK, ip.getNetmaskAsInt());
         
         ip = new IpV6Network(NONE_CIDR);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
