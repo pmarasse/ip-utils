@@ -242,4 +242,10 @@ public class IpV6Network implements IpNetwork {
         public long suffix;
     }
 
+    @Override
+    public String toString() {
+
+        return getCidrAddress();
+    }
+
 }

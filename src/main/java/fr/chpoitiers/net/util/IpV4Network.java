@@ -213,4 +213,10 @@ public class IpV4Network implements IpNetwork {
         }
     }
 
+    @Override
+    public String toString() {
+
+        return getCidrAddress();
+    }
+
 }
