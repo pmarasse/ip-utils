@@ -26,11 +26,15 @@ public class IpV6NetworkTest {
 
     public static final int     TEST_MASK       = 64;
 
+    public static final String  TEST_NET        = "2a01:1234:5678:abcd::";
+
     public static final String  FULL_FF         = "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff";
 
     public static final String  LOCAL_TEST      = "fe80::2e41:38ff:fea4:423";
 
     public static final int     LOCAL_TEST_MASK = 64;
+    
+    public static final String  LOCAL_TEST_NET      = "fe80::";    
 
     public static final String  LOCAL_TEST_CIDR = LOCAL_TEST + "/" + LOCAL_TEST_MASK;
 
@@ -53,14 +57,14 @@ public class IpV6NetworkTest {
 
         ip = new IpV6Network(TEST, TEST_MASK);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
-        assertEquals(TEST, ip.getAddress());
+        assertEquals(TEST_NET, ip.getAddress());
         assertEquals(TEST_MASK, ip.getNetmaskAsInt());
 
         ip = new IpV6Network(LOCAL_TEST_CIDR);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
-        assertEquals(LOCAL_TEST, ip.getAddress());
+        assertEquals(LOCAL_TEST_NET, ip.getAddress());
         assertEquals(LOCAL_TEST_MASK, ip.getNetmaskAsInt());
-        
+
         ip = new IpV6Network(NONE_CIDR);
         log.info("Adresse récupérée : " + ip.getCidrAddress());
         assertEquals(NONE_CIDR, ip.getCidrAddress());

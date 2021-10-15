@@ -1,6 +1,15 @@
 package fr.chpoitiers.net.util;
 
-public class IpV4Network implements IpNetwork {
+import lombok.EqualsAndHashCode;
+
+/**
+ * IPV4 Implementation of IpNetwork. IP address is always rounded according to netmask. If an adress is created as 192.168.0.1/24
+ * it will be "rounded" to 192.168.0.0/24
+ * 
+ * @author Philippe MARASSE
+ */
+@EqualsAndHashCode
+public class IpV4Network implements IpNetwork, Comparable<IpV4Network> {
 
     public final static String SEPARATOR = ".";
 
@@ -31,7 +40,7 @@ public class IpV4Network implements IpNetwork {
         if (cidrMask < 0) {
             throw new NumberFormatException("Invalid netmask : " + netmask);
         }
-
+        applyNetMask();
     }
 
     /**
@@ -46,6 +55,7 @@ public class IpV4Network implements IpNetwork {
 
         rawIp = ipAddressStringToInt(ip);
         setCidrMask(cidrMask);
+        applyNetMask();
     }
 
     /**
@@ -66,6 +76,7 @@ public class IpV4Network implements IpNetwork {
             cidrMask = 32;
         }
         rawIp = ipAddressStringToInt(elts[0]);
+        applyNetMask();
     }
 
     /**
@@ -138,13 +149,24 @@ public class IpV4Network implements IpNetwork {
 
     }
 
+    /**
+     * Apply bitmask to network address.
+     */
+    private void applyNetMask() {
+
+        if (cidrMask == 32) {
+            return;
+        }
+        rawIp &= this.getRawMask();
+    }
+
     @Override
     public boolean isInNetwork(final IpNetwork container) {
 
         if (container instanceof IpV4Network) {
-            int containerNetwork = ((IpV4Network) container).getRawIp() & ((IpV4Network) container).getRawMask();
+            int containerNetwork = ((IpV4Network) container).getRawIp();
             int myNetwork = rawIp & ((IpV4Network) container).getRawMask();
-            return containerNetwork == myNetwork;
+            return (containerNetwork == myNetwork) && (cidrMask >= container.getNetmaskAsInt());
         }
         return false;
     }
@@ -181,10 +203,10 @@ public class IpV4Network implements IpNetwork {
         }
         cidrMask = mask;
     }
-    
+
     @Override
     public int getNetmaskAsInt() {
-        
+
         return cidrMask;
     }
 
@@ -211,12 +233,44 @@ public class IpV4Network implements IpNetwork {
         } else {
             throw new IllegalArgumentException("Illegal value of netmask " + ipAddressIntToString(rawMask));
         }
+        applyNetMask();
     }
 
     @Override
     public String toString() {
 
         return getCidrAddress();
+    }
+
+    @Override
+    public int compareTo(IpV4Network other) {
+
+        if (other.isInNetwork(this) && (other.getNetmaskAsInt() > cidrMask)) {
+            return 3;
+        }
+        if (this.isInNetwork(other) && (other.getNetmaskAsInt() < cidrMask)) {
+            return -3;
+        }
+
+        // Unsigned int does not exist
+        long otherIp = 0x00000000ffffffffL & (long) other.getRawIp();
+        long myIp = 0x00000000ffffffffL & (long) rawIp;
+
+        if (myIp > otherIp) {
+            return 2;
+        }
+        if (myIp < otherIp) {
+            return -2;
+        }
+
+        if (other.getNetmaskAsInt() > cidrMask) {
+            return 1;
+        }
+        if (other.getNetmaskAsInt() < cidrMask) {
+            return -1;
+        }
+
+        return 0;
     }
 
 }

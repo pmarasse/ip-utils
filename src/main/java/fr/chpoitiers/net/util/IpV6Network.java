@@ -1,5 +1,10 @@
 package fr.chpoitiers.net.util;
 
+/**
+ * IPV6 Implementation of IpNetwork
+ * 
+ * @author Philippe MARASSE
+ */
 public class IpV6Network implements IpNetwork {
 
     public final static int    VERSION   = 6;
@@ -20,8 +25,8 @@ public class IpV6Network implements IpNetwork {
      */
     public IpV6Network(final String address, final int cidrMask) {
 
-        this.setCidrMask(cidrMask);
         this.ip = this.parseAddress(address);
+        this.setCidrMask(cidrMask);
     }
 
     /**
@@ -36,12 +41,12 @@ public class IpV6Network implements IpNetwork {
         if (elts.length > 2) {
             throw new IllegalArgumentException("Invalid CIDR Address : " + cidrAddress);
         }
+        ip = parseAddress(elts[0]);
         if (elts.length == 2) {
             setCidrMask(Integer.parseInt(elts[1]));
         } else {
             cidrMask = 128;
         }
-        ip = parseAddress(elts[0]);
     }
 
     /**
@@ -166,6 +171,16 @@ public class IpV6Network implements IpNetwork {
         return mask;
     }
 
+    private void applyNetMask() {
+        if (cidrMask == 128) {
+            return;
+        }
+        
+        DualLong mask = cidrMaskToDualLong(cidrMask);
+        ip.prefix &= mask.prefix;
+        ip.suffix &= mask.suffix;        
+    }
+    
     @Override
     public boolean isInNetwork(final IpNetwork container) {
 
@@ -215,6 +230,7 @@ public class IpV6Network implements IpNetwork {
             throw new IllegalArgumentException("mask must be between 0 and 128");
         }
         this.cidrMask = mask;
+        applyNetMask();
     }
 
     @Override
@@ -238,11 +254,22 @@ public class IpV6Network implements IpNetwork {
      * 
      * @author Philippe Marasse
      */
-    private class DualLong {
+    private class DualLong implements Comparable<DualLong> {
 
         public long prefix;
 
         public long suffix;
+
+        @Override
+        public int compareTo(DualLong o) {
+
+            if (this.prefix > o.prefix || (this.prefix == o.prefix && this.suffix > o.suffix)) {
+                return 10;
+            } else if ((this.prefix < o.prefix) || (this.prefix == o.prefix && this.suffix < o.suffix)) {
+                return -10;
+            }
+            return 0;
+        }
     }
 
     @Override

@@ -1,5 +1,10 @@
 package fr.chpoitiers.net.util;
 
+/**
+ * Interface for classes representing an IpNetwork, regardless of IP version.
+ *
+ * @author Philippe MARASSE
+ */
 public interface IpNetwork {
 
     /**
