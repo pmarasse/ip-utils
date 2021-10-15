@@ -1,103 +1,301 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>fr.chpoitiers</groupId>
-    <artifactId>net-ip-utils</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <description>Classes utilitaires pour la manipulation d'adresses IP</description>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <springldap.version>1.3.1.RELEASE</springldap.version>
-        <springframework.version>3.1.1.RELEASE</springframework.version>
-        <slf4j.log4j12.version>1.6.4</slf4j.log4j12.version>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.chpoitiers</groupId>
+	<artifactId>net-ip-utils</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<description>Classes utilitaires pour la manipulation d'adresses IP</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<lombok.version>1.18.22</lombok.version>
 
-        <junit.version>4.10</junit.version>
-        <commons.codec.version>1.6</commons.codec.version>
-        <commons.pool.version>1.5.4</commons.pool.version>
-    </properties>
+		<junit.version>4.13.2</junit.version>
 
-    <dependencies>
-        <!-- Tests dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.log4j12.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+		<!-- Logging log4j 2.11 s'appuie sur une version alpha de SLF4J -->
+		<slf4j.api.version>1.7.25</slf4j.api.version>
+		<log4j2.version>2.14.1</log4j2.version>
 
-    <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
+		<!-- maven plugins -->
+		<maven.jar.version>3.1.0</maven.jar.version>
+		<maven.compiler.version>3.8.1</maven.compiler.version>
+		<maven.source.version>3.0.1</maven.source.version>
+		<maven.javadoc.version>3.0.1</maven.javadoc.version>
+		<maven.wagon.ssh.version>3.2.0</maven.wagon.ssh.version>
+		<maven.xml.version>1.0.2</maven.xml.version>
+		<maven.failsafe.version>2.22.2</maven.failsafe.version>
+		<maven.surefire.version>2.22.2</maven.surefire.version>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+		<!-- Code coverage -->
+		<jacoco.version>0.8.4</jacoco.version>
+		<jacoco.ut.execution.data.file>${project.build.directory}/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
+	</properties>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+	<dependencies>
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-        </plugins>
-        <extensions>
+		<!-- Tests dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.api.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j2.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j2.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-jcl</artifactId>
+			<version>${log4j2.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.2</version>
-            </extension>
-        </extensions>
-    </build>
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<compilerArgument>-Xlint:all</compilerArgument>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
 
-    <distributionManagement>
+			<!-- SureFire pour les tests unitaires -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.version}</version>
+				<configuration>
+					<forkCount>3</forkCount>
+					<reuseForks>false</reuseForks>
+				</configuration>
+			</plugin>
 
-        <repository>
-            <id>chl-public-released</id>
-            <name>Dépôt CHL public releases</name>
-            <url>scp://dev.ch-poitiers.fr/data/www/dev/maven2/released</url>
-        </repository>
+			<!-- FailSafe pour les tests d'intégration -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven.failsafe.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-        <snapshotRepository>
-            <id>chl-public-snapshots</id>
-            <name>Dépôt CHL public snapshots</name>
-            <url>scp://dev.ch-poitiers.fr/data/www/dev/maven2/snapshots</url>
-        </snapshotRepository>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.version}</version>
+				<configuration>
+					<source>8</source>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-    </distributionManagement>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Code Coverage -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<configuration>
+
+				</configuration>
+				<executions>
+					<!-- prepare agent for measuring unit tests -->
+					<execution>
+						<id>prepare-unit-tests</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${jacoco.ut.execution.data.file}</destFile>
+						</configuration>
+					</execution>
+
+					<!-- phase verify pour prendre en compte les tests d'intégration -->
+					<execution>
+						<id>minimum-coverage</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<haltOnFailure>false</haltOnFailure>
+							<rules>
+								<rule>
+									<element>CLASS</element>
+									<excludes>
+										<exclude>*Test</exclude>
+										<exclude>*IT</exclude>
+									</excludes>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>INSTRUCTION</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.80</minimum>
+										</limit>
+										<limit>
+											<counter>CLASS</counter>
+											<value>MISSEDCOUNT</value>
+											<maximum>0</maximum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+							<dataFile>${jacoco.ut.execution.data.file}</dataFile>
+						</configuration>
+					</execution>
+
+					<!-- phase verify pour prendre en compte les tests d'intégration -->
+					<execution>
+						<id>post-unit-test</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<dataFile>${jacoco.ut.execution.data.file}</dataFile>
+							<!-- Sets the output directory for the code coverage report. -->
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Transformation XML pour extraire les données de résumé exploitable par gitlab -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>${maven.xml.version}</version>
+				<executions>
+					<execution>
+						<id>text-summary</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+						<configuration>
+							<forceCreation>true</forceCreation>
+							<transformationSets>
+								<transformationSet>
+									<dir>${project.reporting.outputDirectory}/jacoco-ut</dir>
+									<includes>
+										<include>jacoco.xml</include>
+									</includes>
+									<stylesheet>src/main/xml/jacoco.xsl</stylesheet>
+									<outputDir>${project.reporting.outputDirectory}/jacoco-ut</outputDir>
+									<fileMappers>
+										<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+											<targetExtension>.txt</targetExtension>
+										</fileMapper>
+									</fileMappers>
+								</transformationSet>
+							</transformationSets>
+							<catalogs>
+								<catalog>src/main/xml/catalog.xml</catalog>
+							</catalogs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<extensions>
+
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>${maven.wagon.ssh.version}</version>
+			</extension>
+		</extensions>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<!-- select non-aggregate reports -->
+							<report>report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<distributionManagement>
+
+		<repository>
+			<id>chl-public-released</id>
+			<name>Dépôt CHL public releases</name>
+			<url>scp://dev.ch-poitiers.fr/data/www/dev/maven2/released</url>
+		</repository>
+
+		<snapshotRepository>
+			<id>chl-public-snapshots</id>
+			<name>Dépôt CHL public snapshots</name>
+			<url>scp://dev.ch-poitiers.fr/data/www/dev/maven2/snapshots</url>
+		</snapshotRepository>
+
+	</distributionManagement>
 
 </project>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<Console name="DefaultLog" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{ISO8601} %-5p [%C{1}.%M] %m%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Logger name="fr.chpoitiers" level="debug" />
+		<Root level="info">
+			<AppenderRef ref="DefaultLog" />
+		</Root>
+	</Loggers>
+</Configuration>
