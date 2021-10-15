@@ -14,7 +14,9 @@ public class IpV6Network implements IpNetwork {
      * Constructor with IP and cidr netmask
      * 
      * @param address
+     *            text representation of IPv6 network
      * @param cidrMask
+     *            value of the mask 0..128
      */
     public IpV6Network(final String address, final int cidrMask) {
 
@@ -26,6 +28,7 @@ public class IpV6Network implements IpNetwork {
      * Constructor with a single cidr address (eg: fe80::aabb:ccff:fedd:eeff/64)
      * 
      * @param cidrAddress
+     *            text representation of network (address/mask)
      */
     public IpV6Network(final String cidrAddress) {
 
